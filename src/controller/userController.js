@@ -5,20 +5,27 @@ const bcrypt = require('bcrypt')
 async function signup(req, res) {
   try {
     const { username, email, password } = req.body
-    const hashedPassword = bcrypt.hashSync(password, 10)
+    if (!username || !email || !password)
+      return res.status(400).json({
+        status: 'fail',
+        message: 'Please provide username, email and password',
+      })
+    else {
+      const hashedPassword = bcrypt.hashSync(password, 10)
 
-    const newUser = new UserSchema({
-      username,
-      email,
-      password: hashedPassword,
-    })
+      const newUser = new UserSchema({
+        username,
+        email,
+        password: hashedPassword,
+      })
 
-    const result = await newUser.save()
-    res.status(201).json({
-      status: 'success',
-      message: 'User created successfully',
-      data: { result },
-    })
+      const result = await newUser.save()
+      res.status(201).json({
+        status: 'success',
+        message: 'User created successfully',
+        data: { result },
+      })
+    }
   } catch (err) {
     res.status(500).json({
       status: 'fail',
@@ -68,11 +75,10 @@ async function login(req, res) {
         return res
           .status(404)
           .json({ status: 'fail', message: 'Password not match' })
-      const token = jwt.sign(
-        { username: user.username, id: user._id },
-        process.env.SECRET_KEY,
-        { expiresIn: '1h' }
-      )
+      const { username, _id } = user
+      const token = jwt.sign({ username, _id }, process.env.SECRET_KEY, {
+        expiresIn: '1h',
+      })
       res.status(200).json({
         status: 'success',
         message: 'User logged in successfully',
