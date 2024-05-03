@@ -1,4 +1,4 @@
-const UserSchema = require('../model/userSchema')
+const userSchema = require('../model/userSchema')
 const jwt = require('jsonwebtoken')
 const bcrypt = require('bcrypt')
 
@@ -13,7 +13,7 @@ async function signup(req, res) {
     else {
       const hashedPassword = bcrypt.hashSync(password, 10)
 
-      const newUser = new UserSchema({
+      const newUser = new userSchema({
         username,
         email,
         password: hashedPassword,
@@ -38,7 +38,7 @@ async function signup(req, res) {
 async function getUserInformation(req, res) {
   try {
     const userId = req.params.id
-    const selectedUser = await UserSchema.findById(userId)
+    const selectedUser = await userSchema.findById(userId)
     res.status(200).json({
       status: 'success',
       message: 'User retrieved successfully',
@@ -64,7 +64,7 @@ async function login(req, res) {
         message: 'Please provide email and password',
       })
     else {
-      const user = await UserSchema.findOne({ email })
+      const user = await userSchema.findOne({ email })
       if (!user)
         return res.status(404).json({
           status: 'fail',
@@ -82,7 +82,7 @@ async function login(req, res) {
       res.status(200).json({
         status: 'success',
         message: 'User logged in successfully',
-        data: token,
+        data: { token },
       })
     }
   } catch (err) {

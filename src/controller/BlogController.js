@@ -31,4 +31,22 @@ const createBlog = async function (req, res) {
   }
 }
 
-module.exports = { createBlog }
+const getBlogById = async function (req, res) {
+  try {
+    const blogId = req.params.id
+    const selectedBlog = await blogSchema.findById(blogId)
+    res.status(200).json({
+      status: 'success',
+      message: 'Blog retrieved successfully',
+      data: {blog: selectedBlog},
+    })
+  } catch (err) {
+    res.status(404).json({
+      status: 'fail',
+      message: 'Blog not retrieved successfully',
+      error: err.message
+    })
+  }
+}
+
+module.exports = { createBlog, getBlogById }
