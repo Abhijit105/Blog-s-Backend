@@ -38,15 +38,32 @@ const getBlogById = async function (req, res) {
     res.status(200).json({
       status: 'success',
       message: 'Blog retrieved successfully',
-      data: {blog: selectedBlog},
+      data: { blog: selectedBlog },
     })
   } catch (err) {
     res.status(404).json({
       status: 'fail',
       message: 'Blog not retrieved successfully',
-      error: err.message
+      error: err.message,
     })
   }
 }
 
-module.exports = { createBlog, getBlogById }
+const getBlogs = async function (req, res) {
+  try {
+    const blogs = await blogSchema.find()
+    res.status(200).json({
+      status: 'success',
+      message: 'Blogs retrieved successfully',
+      data: { blogs },
+    })
+  } catch (err) {
+    res.status(404).json({
+      status: 'fail',
+      message: 'Blogs not retrieved successfully',
+      error: err.message,
+    })
+  }
+}
+
+module.exports = { createBlog, getBlogById, getBlogs }
